@@ -1,4 +1,5 @@
 var request = require('supertest'), 
+should = require('should'),
 express = require('express');
 
 var app = express()

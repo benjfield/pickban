@@ -14,10 +14,11 @@
     "morgan": "~1.6.1",
     "serve-favicon": "~2.3.0",
     "mongodb": "~2.0.47",
-    "monk": "~1.0.1",
-    "mocha": "~2.3.3"
+    "monk": "~1.0.1"
   },
   "devDependencies": {
-    "supertest": "^1.1.0"
+    "mocha": "~2.3.3",
+    "supertest": "^1.1.0",
+    "should": ">= 0.0.1"
   }
 }
