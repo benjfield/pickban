@@ -11,7 +11,6 @@ var monk = require('monk');
 var db = monk('localhost:27017/pickban');
 
 var routes = require('./routes/index');
-var users = require('./routes/users');
 var teams = require('./routes/teams');
 
 var app = express();
@@ -35,7 +34,6 @@ app.use(function(req,res,next){
 });
 
 app.use('/', routes);
-app.use('/users', users);
 app.use('/teams', teams);
 
 // catch 404 and forward to error handler
