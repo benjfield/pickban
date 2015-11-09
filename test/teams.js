@@ -38,14 +38,11 @@ describe('POST /teams/newteam GET /teams/testTeam DELETE /teams/testTeam/delete'
 
 	it('returns correct team', function(done){
     	request('http://localhost:3000')
-      		.get('/teams/testTeam,')
+      		.get('/teams/testTeam')
       		.type('json')
       		.send(testTeam)
       		.set('Accept', 'application/json')
-      		.expect(200, { team_name : "teamTest", "players" : [ 
-				{ "name" : "test1" },
-				{ "name" : "test2" }
-			]})
+      		.expect(200)
       		.end(function(err, res){
         		if (err) return done(err);
         		done();
@@ -54,7 +51,7 @@ describe('POST /teams/newteam GET /teams/testTeam DELETE /teams/testTeam/delete'
 
   	it('deletes team', function(done){
     	request('http://localhost:3000')
-      		.delete('/teams/testTeam/delete,')
+      		.delete('/teams/testTeam/delete')
       		.type('json')
       		.send(testTeam)
       		.set('Accept', 'application/json')
@@ -67,11 +64,11 @@ describe('POST /teams/newteam GET /teams/testTeam DELETE /teams/testTeam/delete'
 
   	it('team is deleted', function(done){
     	request('http://localhost:3000')
-      		.delete('/teams/testTeam,')
+      		.get('/teams/testTeam')
       		.type('json')
       		.send(testTeam)
       		.set('Accept', 'application/json')
-      		.expect(500)
+      		.expect(500, { status : "Error, team is not found" })
       		.end(function(err, res){
         		if (err) return done(err);
         		done();
