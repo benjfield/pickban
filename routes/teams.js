@@ -16,7 +16,7 @@ router.post('/newteam', function(req, res) {
 	var db = req.db;
 	var collection = db.get('teamlist');
 	collection.insert(req.body, function(err, result){
-		if  (err != null) {
+		if  (err == null) {
 			res.json({ status : 'ok'});
 		}
 		else {

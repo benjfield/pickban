@@ -21,9 +21,10 @@ var testTeam = {
 };
 
 describe('POST /teams/newteam', function(){
-  it('respond with json', function(done){
+  it('accepts post and responds with json', function(done){
     request('http://localhost:3000')
-      .put('/teams/teamlist')
+      .post('/teams/newteam')
+      .type('json')
       .send(testTeam)
       .set('Accept', 'application/json')
       .expect(200)
