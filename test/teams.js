@@ -68,7 +68,7 @@ describe('POST /teams/newteam GET /teams/testTeam DELETE /teams/testTeam/delete'
       		.type('json')
       		.send(testTeam)
       		.set('Accept', 'application/json')
-      		.expect(500, { status : "Error, team is not found" })
+      		.expect(500, { status : "Error, team testTeam is not found" })
       		.end(function(err, res){
         		if (err) return done(err);
         		done();
