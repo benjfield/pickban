@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var Game = require('../lib/game');
+var Game = require('../lib/game')(mongoose);
 var Team = require('../lib/team');
 var Joi = require('joi');
 
@@ -33,12 +33,13 @@ function returnID(team_name) {
 }
 
 router.post('/newgame', function(req, res) {
-	var gameDetails = req.body;
-	gameDetails.teams.map( function (team_name) {
+	var game_details = req.body;
+	game_details.teams.map( function (team_name) {
 		returnID(team_name);
 	});
-	gameDetails.
-	var newGame = Game(gameDetails);
+	game_details.radiant = returnID(game_details.radiant);
+	game_details.first_pick = returnID(game_details.first_pick);
+	var newGame = Game(game_details);
 	newGame.save( function(err) {
 		if  (err) {
 			console.log(err);
@@ -49,6 +50,5 @@ router.post('/newgame', function(req, res) {
 		}
 	});
 });
-
 
 module.exports = router;
