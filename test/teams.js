@@ -22,7 +22,7 @@ var testTeam = {
 	]
 };
 
-describe('POST /teams/newteam GET /teams/testTeam DELETE /teams/testTeam/delete', function(){
+describe('POST /teams/newteam GET /teams/testTeam DELETE /teams/testTeam', function(){
   	it('accepts post and responds with json', function(done){
     	request('http://localhost:3000')
       		.post('/teams/newteam')
@@ -40,7 +40,6 @@ describe('POST /teams/newteam GET /teams/testTeam DELETE /teams/testTeam/delete'
     	request('http://localhost:3000')
       		.get('/teams/testTeam')
       		.type('json')
-      		.send(testTeam)
       		.set('Accept', 'application/json')
       		.expect(200)
       		.end(function(err, res){
@@ -53,7 +52,6 @@ describe('POST /teams/newteam GET /teams/testTeam DELETE /teams/testTeam/delete'
     	request('http://localhost:3000')
       		.delete('/teams/testTeam')
       		.type('json')
-      		.send(testTeam)
       		.set('Accept', 'application/json')
       		.expect(200)
       		.end(function(err, res){
@@ -66,7 +64,6 @@ describe('POST /teams/newteam GET /teams/testTeam DELETE /teams/testTeam/delete'
     	request('http://localhost:3000')
       		.get('/teams/testTeam')
       		.type('json')
-      		.send(testTeam)
       		.set('Accept', 'application/json')
       		.expect(500, { status : "Error, team testTeam is not found" })
       		.end(function(err, res){

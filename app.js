@@ -7,9 +7,9 @@ var bodyParser = require('body-parser');
 
 // Database
 
-var routes = require('./routes/index');
+//var routes = require('./routes/index');
 var teams = require('./routes/teams');
-//var games = require('./routes/games');
+var games = require('./routes/games');
 
 var mongoose = require('mongoose');
 
@@ -32,9 +32,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', routes);
+//app.use('/', routes);
 app.use('/teams', teams);
-//app.use('/games', games);
+app.use('/games', games);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
