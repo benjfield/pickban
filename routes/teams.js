@@ -26,7 +26,7 @@ router.get('/:team_name', function(req, res) {
 			res.status(500).json({ status : err});
 		}
 		if ( team === null ) {
-			res.status(500).json({ status : "Error, team is not found" });
+			res.status(500).json({ status : "Error, team " + req.params.team_name + " is not found" });
 		}
 		else {
 			res.json(team);
@@ -34,7 +34,7 @@ router.get('/:team_name', function(req, res) {
 	});
 });
 
-router.delete('/:team_name/delete', function(req, res) {
+router.delete('/:team_name', function(req, res) {
 	Team.findOneAndRemove({ team_name: req.params.team_name }, function(err, team) {
 		if  (err) {
 			console.log(err);

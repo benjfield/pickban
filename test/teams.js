@@ -51,7 +51,7 @@ describe('POST /teams/newteam GET /teams/testTeam DELETE /teams/testTeam/delete'
 
   	it('deletes team', function(done){
     	request('http://localhost:3000')
-      		.delete('/teams/testTeam/delete')
+      		.delete('/teams/testTeam')
       		.type('json')
       		.send(testTeam)
       		.set('Accept', 'application/json')

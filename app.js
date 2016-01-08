@@ -11,11 +11,18 @@ var routes = require('./routes/index');
 var teams = require('./routes/teams');
 //var games = require('./routes/games');
 
+var mongoose = require('mongoose');
+
+mongoose.connect('mongodb://localhost/pickban', function (err) {
+  if (err) {
+    throw err;
+  }});
+
 var app = express();
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+// view engine setup -  commented as currently unused.
+//app.set('views', path.join(__dirname, 'views'));
+//app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
