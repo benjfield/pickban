@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var Game = require('../lib/game');
 var Team = require('../lib/team');
 var Joi = require('joi');
 
@@ -35,15 +36,37 @@ router.get('/:team_name', function(req, res) {
 });
 
 router.delete('/:team_name', function(req, res) {
-	Team.findOneAndRemove({ team_name: req.params.team_name }, function(err, team) {
+	Team.findOne({ team_name: req.params.team_name }, function (err) {
 		if  (err) {
 			console.log(err);
 			res.status(500).json({ status : err});
 		}
-		else {
-			res.json({ status : 'OK, team deleted' });
+	}).then( function (team) {
+		console.log(team);
+		if ( team === null ) {
+				res.status(500).json({ status : "Error, team " + req.params.team_name + " is not found" });
+		} else {
+			Game.findOne({ "teams.team": team._id}, function(err) {
+				if  (err) {
+					console.log(err);
+					res.status(500).json({ status : err});
+				}
+			}).then( function (games) {
+				if (games === null) {
+					team.remove( function (err) {
+						if  (err) {
+							console.log(err);
+							res.status(500).json({ status : err});
+						} else {
+							res.json({ status : 'OK, team deleted' });
+						}
+					})
+				} else {
+					res.status(500).json({ status : "Error, games are associated with " + req.params.team_name });
+				}
+			})
 		}
-	});
+	})
 });
 
 var team_schema = Joi.object ({
