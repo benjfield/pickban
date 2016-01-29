@@ -116,5 +116,21 @@ describe('Game creation tests', function(){
           done();
         });
     });
+
+    it('rejects the bad game and responds with json', function(done){
+      request('http://localhost:3000')
+        .post('/games/newgame')
+        .type('json')
+        .send(badGame)
+        .set('Accept', 'application/json')
+        .expect(500)
+        .end(function(err, res){
+          if (err) {
+            console.log(err);
+            return done(err);
+          }
+          done();
+        });
+    });
   });
 })

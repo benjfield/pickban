@@ -13,7 +13,7 @@ var games = require('./routes/games');
 
 var mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost/pickban', function (err) {
+mongoose.connect('mongodb://pickban:password@ds051585.mongolab.com:51585/pickban', function (err) {
   if (err) {
     throw err;
   }});
