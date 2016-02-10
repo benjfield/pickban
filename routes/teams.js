@@ -21,16 +21,35 @@ router.get('/teamlist', function(req, res) {
 });
 
 router.get('/:team_name', function(req, res) {
-	Team.findOne({ team_name: req.params.team_name }, function(err, team) {
+	Team.findOne({ team_name: req.params.team_name }, function(err) {
 		if  (err) {
 			console.log(err);
 			res.status(500).json({ status : err});
 		}
+	}).lean().then( function(team) {
 		if ( team === null ) {
 			res.status(500).json({ status : "Error, team " + req.params.team_name + " is not found" });
 		}
 		else {
-			res.json(team);
+			Game.count({ "teams": { $elemMatch: { "team": team._id, "winner": true}}, finished: { $ne: null }}, function(err) {
+				if  (err) {
+					console.log(err);
+					res.status(500).json({ status : err});
+				}
+			}).then( function (won_games) {
+				Game.count({ "teams": { $elemMatch: { "team": team._id}}, finished: { $ne: null }}, function(err) {
+					if  (err) {
+						console.log(err);
+						res.status(500).json({ status : err});
+					}
+				}).then( function (played_games) {
+					team.won_games = won_games;
+					team.played_games = played_games;
+					if (played_games == 0) team.win_percent = null;
+					else team.win_percent = won_games / played_games * 100;
+					res.json(team);
+				});
+			});
 		}
 	});
 });
@@ -70,7 +89,7 @@ router.delete('/:team_name', function(req, res) {
 });
 
 var team_schema = Joi.object ({
-	team_name: Joi.string().alphanum().required(),
+	team_name: Joi.string().alphanum().min(1).required(),
 	players: Joi.array().items(Joi.object( { name : Joi.string().alphanum().required(),}), Joi.object( { name : Joi.string().alphanum().required(),})).required()
 });
 
@@ -95,5 +114,15 @@ router.post('/newteam', function(req, res) {
 		}	
 	});
 });
+
+router.get('/:team_name/most_picked', function(req, res) {
+	console.log(
+		Game.aggregate( { $group: { _id: "$teams.team.pick1"}, count: { $sum: 1} })
+		.exec( function(err) {
+			return err;
+		})
+	)
+
+})
 
 module.exports = router;

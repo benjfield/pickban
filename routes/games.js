@@ -24,7 +24,6 @@ router.get('/gamelist', function(req, res) {
 
 router.post('/newgame', function(req, res) {
 	var game_details = req.body;
-	var teamsInGame = {};
 	Team.findOne({ "team_name": game_details.teams[0].team }, function(err) {
 		if (err) {
 			console.log(err);
@@ -56,16 +55,84 @@ router.post('/newgame', function(req, res) {
 			console.log(game_details);
 	
 			var newGame = Game(game_details);
-			newGame.save( function(err) {
+			newGame.save( function(err, game) {
 				if  (err) {
 					console.log(err);
 					res.status(500).json({ status : err});
 				}
 				else {
-					res.json({ status : 'OK, game added' });
+					res.json({ status : 'OK, game added',
+						id: game._id });
 				}
 			});
 		});
+	});
+});
+
+router.get('/:game_id', function(req, res) {
+	Game.findOne({ "_id": req.params.game_id }, function(err) {
+		if  (err) {
+			console.log(err);
+			res.status(500).json({ status : err});
+		}
+	})
+	.populate({ path: "teams.team", select: "team_name"})
+	.lean()
+	.then( function(game) {
+		if ( game === null ) {
+			res.status(500).json({ status : "Error, game " + req.params.game_id + " is not found" });
+		}
+		else {
+			res.json(game);
+		}
+	});
+});
+
+var finalise_schema = Joi.object ({
+	"winner": Joi.string().alphanum().min(1).required()
+});
+
+
+router.post('/:game_id/finalise', function(req, res) {
+	Joi.validate(req.body, finalise_schema, function (err, valid_winner) {
+		if (err) {
+			console.log(err);
+			res.status(500).json({ status : err });
+		}
+		else {
+			Game.findOne({ "_id": req.params.game_id }, function(err) {
+				if  (err) {
+					console.log(err);
+					res.status(500).json({ status : err});
+				}
+			})
+			.populate({ path: "teams.team", select: "team_name"})
+			.then( function(game) {
+				if ( game === null ) {
+					res.status(500).json({ status : "Error, game " + req.params.game_id + " is not found" });
+				} else if ( game.finished != null) {
+					res.status(500).json({ status : "Error, game " + req.params.game_id + " has already finished!" });
+				}
+				else {
+					team_number = game.teams.findIndex( function(team_details){
+						if (team_details.team.team_name == valid_winner.winner) {
+							return true
+						}
+						return false;
+					})
+					if (team_number == -1) {
+						res.status(500).json({ status : "Error, team " + valid_winner.winner + " is not in game " + req.params.game_id });
+					} else {
+						game.teams[team_number].winner = true;
+						res.json({ status : 'OK, ' + valid_winner.winner + ' won the game',
+							id: game._id
+						});
+						game.finished = Date.now();
+						game.save();
+					}
+				}
+			});
+		}
 	});
 });
 
