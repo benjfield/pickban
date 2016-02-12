@@ -4,9 +4,14 @@ var Game = require('../lib/game');
 var Team = require('../lib/team');
 var Joi = require('joi');
 
-function get_team_from_name(team_name) {
+function get_lean_team_from_name(team_name) {
 	return Team.findOne({ "team_name": team_name })
 	.lean()
+	.exec();
+}
+
+function get_team_from_name(team_name) {
+	return Team.findOne({ "team_name": team_name })
 	.exec();
 }
 
@@ -161,7 +166,7 @@ router.get('/most_successful_heroes', function(req, res) {
 })
 
 router.get('/:team_name', function(req, res) {
-	get_team_from_name(req.params.team_name)
+	get_lean_team_from_name(req.params.team_name)
 	.then( function(team) {
 		if ( team === null ) {
 			res.status(500).json({ status : "Error, team " + req.params.team_name + " is not found" });
@@ -248,19 +253,8 @@ router.post('/newteam', function(req, res) {
 	});
 });
 
-router.get('/:team_name/test', function(req, res) {
-	get_team_from_name(req.params.team_name)
-	.then( function(team) {
-		most_successful_heroes(team._id)
-		.then( function(results) {
-			console.log(results);
-			res.json({ "most_successful" : results });
-		})
-	});
-})
-
 router.get('/:team_name/stats', function(req, res) {
-	get_team_from_name(req.params.team_name)
+	get_lean_team_from_name(req.params.team_name)
 	.then( function(team) {
 		Promise.all([played_games(team._id), won_games(team._id) ])
 		.then ( function(results) {
@@ -278,7 +272,7 @@ router.get('/:team_name/stats', function(req, res) {
 })
 
 router.get('/:team_name/most_picked_heroes', function(req, res) {
-	get_team_from_name(req.params.team_name)
+	get_lean_team_from_name(req.params.team_name)
 	.then( function(team) {
 		most_picked_heroes(team._id)
 		.then( function(result) {
@@ -294,7 +288,7 @@ router.get('/:team_name/most_picked_heroes', function(req, res) {
 })
 
 router.get('/:team_name/most_banned_heroes', function(req, res) {
-	get_team_from_name(req.params.team_name)
+	get_lean_team_from_name(req.params.team_name)
 	.then( function(team) {
 		most_banned_heroes(team._id)
 		.then( function(result) {
@@ -310,7 +304,7 @@ router.get('/:team_name/most_banned_heroes', function(req, res) {
 })
 
 router.get('/:team_name/most_successful_heroes', function(req, res) {
-	get_team_from_name(req.params.team_name)
+	get_lean_team_from_name(req.params.team_name)
 	.then( function(team) {
 		most_successful_heroes(team._id)
 		.then( function(result) {

@@ -56,6 +56,15 @@ describe('Game creation tests', function(){
 
   after(function(){
     request('http://localhost:3000')
+      .delete('/games/unfinished')
+      .type('json')
+      .set('Accept', 'application/json')
+      .expect(200)
+      .end(function(err, res){
+        if (err) console.log(err);
+    });
+
+    request('http://localhost:3000')
       .delete('/teams/testTeam1')
       .type('json')
       .set('Accept', 'application/json')
